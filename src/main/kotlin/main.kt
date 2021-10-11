@@ -22,12 +22,46 @@ fun main(){
 
     //Task 3 --> Date
     val currentDate: Date = Date()
-    val date:Date=Date(1900,2,21);
-    println(date.isLeapYear());
-    val date2:Date=Date(1012,2,21);
-    println(date2.isLeapYear());
+    val date:Date=Date(1900,2,21)
+    println(date.isLeapYear())
+    val date2:Date=Date(1012,2,21)
+    println(date2.isLeapYear())
 
+    var validDates=0
+    var listOfValidDates = arrayListOf<Date>()
+    while(validDates<10){
+        val temp = generateRandom()
+        if(temp.isValid()){
+            listOfValidDates.add(temp)
+            validDates++
+        }
+        else{
+            println(temp)
+        }
+    }
+    println("Valid dates: $validDates")
+    listOfValidDates.forEach({println("Date: ${it}")})
 
+    listOfValidDates.sort()
+    println("Sorted:")
+    listOfValidDates.forEach({println("Date: ${it}")})
+
+    println("\nReverse:")
+    listOfValidDates.reverse()
+    listOfValidDates.forEach({println("Date: ${it}")})
+
+    val comparator = ComparatorByDay()
+    listOfValidDates.sortWith(comparator)
+    println("\nList sorted with comparator")
+    listOfValidDates.forEach({println("Date: ${it}")})
+}
+
+fun generateRandom(): Date{
+    val y: Int = (1800..2100).random()
+    val m: Int = (1..12).random()
+    val d: Int = (1..31).random()
+    var temp: Date = Date(y,m,d);
+    return temp;
 }
 
 fun String.monogram(): String{
@@ -52,10 +86,40 @@ fun Date.isLeapYear(): Boolean{
     else if(this.year % 4 == 0 ){
         return true
     }
-    return false;
+    return false
 }
 
 fun Date.isValid(): Boolean {
-    //return this.getTime() === this.getTime();
+    if(this.isLeapYear()){
+        if(this.month==2){
+            if(this.day>29){return false}
+        }
+    }
+    else{
+        if(month == 2){
+            if(this.day>28){
+                return false;
+            }
+        }
+        if(this.month==1 || this.month==3 || this.month==5 || this.month==7 || this.month==8 || this.month==10 || this.month==12){
+            if(this.day>31){
+                return false;
+            }
+        }
+        else{
+            if(this.day>30){
+                return false;
+            }
+        }
+    }
+    if( this.year<1800 || this.year > 2100){
+        return false;
+    }
     return true
+}
+
+class ComparatorByDay: Comparator<Date>{
+    override fun compare(o1: Date, o2: Date): Int {
+        return o1.day.compareTo(o2.day)
+    }
 }
